@@ -1,0 +1,21 @@
+ /* dailys */
+ .daily-schedule table {
+    width: 100%; /* 테이블 전체 너비를 부모 요소에 맞춤 */
+    table-layout: fixed; /* 테이블 레이아웃을 고정하여 열 너비를 정확히 제어 */
+    border-collapse: collapse; /* 셀 사이의 테두리를 겹치게 함 */
+    margin-top: 20px;
+  }
+  
+  .daily-schedule th, .daily-schedule td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center; /* 내용을 중앙으로 정렬 */
+  }
+  
+  .daily-schedule th:not(:first-child), .daily-schedule td:not(:first-child) {
+    width: calc((100% - 100px) / 7); /* 첫 번째 열을 제외한 나머지 열의 너비 */
+  }
+  
+  .daily-schedule th:first-child, .daily-schedule td:first-child {
+    width: 100px; /* 시간 열의 고정된 너비 설정 */
+  }

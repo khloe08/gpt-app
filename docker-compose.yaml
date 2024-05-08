@@ -1,0 +1,79 @@
+version: '3.7'
+services:
+ 
+  db:
+    container_name: mysql-container
+    image: mysql:8.0.32
+    restart: always
+    volumes:
+      - mysql_volume:/app/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=mysql
+      - MYSQL_DATABASE=myapp
+      - MYSQL_USER=myappuser
+      - MYSQL_PASSWORD=ABCabc123!
+    ports:
+      - "3306:3306"
+    networks:
+      - myapp-net
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+
+  backend:
+    restart: always
+    build:
+      context: backend
+      dockerfile: dockerfile
+    ports:
+      - "8080:8080"
+    volumes:
+      - myapp_images:/app/myapp/images
+    networks:
+      - myapp-net
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/myapp
+    container_name: myapp-api
+
+
+  frontend:
+    restart: always
+    build:
+      context: frontend
+      dockerfile: dockerfile
+    ports:
+      - "3000:3000"
+    networks:
+      - myapp-net
+    container_name: myapp-web
+    # environment:
+    #   - API_URL=http://host.docker.internal:8080   # 프론트엔드에서 백엔드 서비스를 찾는 URL 설정
+  
+  nginx:  
+    image: nginx:1.21.5-alpine
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+    ports:
+      - 80:80
+    container_name: myapp-proxy
+    networks:
+      - myapp-net
+    depends_on:
+      - backend
+      - frontend
+
+ 
+
+networks:
+  myapp-net:
+    driver: bridge
+
+volumes:
+  mysql_volume:
+    driver: local
+  myapp_images:
+    driver: local

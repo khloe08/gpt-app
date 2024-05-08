@@ -22,12 +22,12 @@ WORKDIR /frontend
 # 인터넷 연결이 불안정하거나 속도가 느릴 경우, 네트워크 문제로 타임아웃이 발생할 수 있습니다.
 
 # 프록시 서버를 사용하는 환경일 경우, 다음 환경 변수를 설정합니다.
-ENV http_proxy http://host.docker.internal:8080
-ENV https_proxy http://host.docker.internal:8080
+#ENV http_proxy http://host.docker.internal:8080
+#ENV https_proxy http://host.docker.internal:8080
 
 # npm 프록시 설정
-RUN npm config set proxy http://host.docker.internal:8080
-RUN npm config set https-proxy http://host.docker.internal:8080
+#RUN npm config set proxy http://host.docker.internal:8080
+#RUN npm config set https-proxy http://host.docker.internal:8080
 
 # package.json과 package-lock.json을 먼저 복사하여 레이어 캐싱 활용
 COPY package.json package-lock.json ./
@@ -36,38 +36,43 @@ COPY package.json package-lock.json ./
 RUN npm install
 
 # 나머지 소스 코드 복사
-COPY ./ ./
+COPY . .
 
 # 프로젝트 빌드
 RUN npm run build
 
+# serve 설치
+RUN npm install -g serve
+
+ENTRYPOINT ["serve", "-s", "build"]
+
 # 두 번째 스테이지: Nginx를 사용하여 빌드된 파일 제공
-FROM nginx:latest
+#FROM nginx:latest
 # 기본 설정 파일 삭제
-RUN rm -rf /etc/nginx/conf.d/*
+#RUN rm -rf /etc/nginx/conf.d/*
 
 # 사용자 정의 Nginx 설정 파일 복사
-COPY ./nginx/nginx.conf /etc/nginx/conf.d/
+#COPY ./nginx/nginx.conf /etc/nginx/conf.d/
 
 # 첫 번째 스테이지에서 빌드된 파일 복사
-COPY --from=builder /frontend/build /usr/share/nginx/html
+#COPY --from=builder /frontend/build /usr/share/nginx/html
 
 # Nginx를 위한 보안 향상된 HTTP 헤더 설정
-RUN echo $'add_header X-Frame-Options "SAMEORIGIN";\n\
-add_header X-Content-Type-Options "nosniff";\n\
-add_header X-XSS-Protection "1; mode=block";\n\
-add_header Strict-Transport-Security "max-age=31536000; includeSubDomains";\n'\
->> /etc/nginx/conf.d/default.conf
+# RUN echo $'add_header X-Frame-Options "SAMEORIGIN";\n\
+# add_header X-Content-Type-Options "nosniff";\n\
+# add_header X-XSS-Protection "1; mode=block";\n\
+# add_header Strict-Transport-Security "max-age=31536000; includeSubDomains";\n'\
+# >> /etc/nginx/conf.d/default.conf
 
-# gzip 압축 활성화
-RUN sed -i 's/#gzip/gzip/g' /etc/nginx/nginx.conf
+# # gzip 압축 활성화
+# RUN sed -i 's/#gzip/gzip/g' /etc/nginx/nginx.conf
 
-# 포트 80 개방
-EXPOSE 80
+# # 포트 80 개방
+# EXPOSE 80
 
-# 건강 상태 점검 추가
-HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
-  CMD curl -f http://localhost/ || exit 1
+# # 건강 상태 점검 추가
+# HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
+#   CMD curl -f http://localhost/ || exit 1
 
-# Nginx 시작 명령
-CMD ["nginx", "-g", "daemon off;"]
+# # Nginx 시작 명령
+# CMD ["nginx", "-g", "daemon off;"]

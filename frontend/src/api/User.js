@@ -37,7 +37,7 @@ export const loginUser = async (credentials) => {
         body: JSON.stringify(credentials)
     };
 
-    const data = await getPromise('/auth/sign-in', option).catch(() => {
+    const data = await getPromise('/api/auth/sign-in', option).catch(() => {
         return statusError;
     });
     if (parseInt(Number(data.status)/100)===2) {
@@ -65,7 +65,7 @@ export const logoutUser = async (credentials, accessToken) => {
         body: JSON.stringify(credentials)
     };
 
-    const data = await getPromise('/auth/logout', option).catch(() => {
+    const data = await getPromise('/api/auth/logout', option).catch(() => {
         return statusError;
     });
 
@@ -94,7 +94,7 @@ export const requestToken = async (refreshToken) => {
         body: JSON.stringify({ refresh_token: refreshToken })
     }
 
-    const data = await getPromise('/user/login', option).catch(() => {
+    const data = await getPromise('/api/user/login', option).catch(() => {
         return statusError;
     });
 

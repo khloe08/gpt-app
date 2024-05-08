@@ -1,0 +1,51 @@
+
+/* Schedule */
+.weekly-container {
+    display: flex;
+    width:  calc(100px / 7);  /*컨테이너가 전체 너비를 사용하도록 설정 */
+   /*  flex-wrap: wrap; 화면이 줄어들 때 아이템들이 다음 줄로 넘어갈 수 있도록 함 */
+  }
+  
+  .weekly-container > div {
+    box-sizing: border-box;
+    flex: 1;  /*모든 자식 요소가 유연하게 너비를 조정 */
+    min-width: 120px; /* 최소 너비를 설정하여 너무 작아지지 않도록 함 */
+     /*max-width: calc(100% / 7); 아이템이 차지할 수 있는 최대 너비를 설정 */
+  }
+
+
+
+/* header.css */
+.weekly-schedule {
+    margin-top: 20px;
+    margin-left: 116.9px;
+
+}
+.weekly-schedule-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #b0c4de;
+    padding: 10px;
+  }
+  
+  .weekly-schedule-header h1 {
+    margin: 0;
+    color: #333;
+  }
+  
+  .weekly-schedule-header div {
+    align-items: center;
+  }
+  
+  .weekly-schedule-header label {
+    margin-right: 10px;
+    color: #333;
+  }
+  
+  .react-datepicker-wrapper {
+    margin-left: 10px;
+    margin-right: 50px;
+  }
+
+ 
